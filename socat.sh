@@ -167,14 +167,14 @@ startSocat(){
 	if [[ ${socattype} = "TCP" ]]; then
 		runSocat "TCP6"
 		sleep 2s
-		PID=`ps -ef | grep "socat TCP4-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
+		PID=`ps -ef | grep "socat tcp6-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
 		[[ -z $PID ]] && echo -e "${Error} Socat TCP 启动失败 !" && exit 1
 		addLocal "TCP6"
 		iptables -I INPUT -p tcp --dport ${Socatport} -j ACCEPT
 	elif [[ ${socattype} = "UDP" ]]; then
 		runSocat "UDP6"
 		sleep 2s
-		PID=`ps -ef | grep "socat UDP4-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
+		PID=`ps -ef | grep "socat udp6-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
 		[[ -z $PID ]] && echo -e "${Error} Socat UDP 启动失败 !" && exit 1
 		addLocal "UDP6"
 		iptables -I INPUT -p udp --dport ${Socatport} -j ACCEPT
@@ -254,7 +254,7 @@ delSocat(){
 			# 删除防火墙规则
 			socat_listen=`ps -ef | grep socat | grep -v grep | grep -v "socat.sh" | awk '{print $9}' | sed -n "${stopsocat}p" | sed -r 's/.*LISTEN:(.+),reuseaddr.*/\1/'`
 			socat_type=`ps -ef | grep socat | grep -v grep | grep -v "socat.sh" | awk '{print $9}' | sed -n "${stopsocat}p" | cut -c 1-4`
-			if [[ ${socat_type} = "TCP4" ]]; then
+			if [[ ${socat_type} = "tcp6" ]]; then
 				iptables -D INPUT -p tcp --dport ${socat_listen} -j ACCEPT
 			else
 				iptables -D INPUT -p udp --dport ${socat_listen} -j ACCEPT
