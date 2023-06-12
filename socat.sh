@@ -165,31 +165,31 @@ addSocat(){
 }
 startSocat(){
 	if [[ ${socattype} = "TCP" ]]; then
-		runSocat "TCP4"
+		runSocat "TCP6"
 		sleep 2s
 		PID=`ps -ef | grep "socat TCP4-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
 		[[ -z $PID ]] && echo -e "${Error} Socat TCP 启动失败 !" && exit 1
-		addLocal "TCP4"
+		addLocal "TCP6"
 		iptables -I INPUT -p tcp --dport ${Socatport} -j ACCEPT
 	elif [[ ${socattype} = "UDP" ]]; then
-		runSocat "UDP4"
+		runSocat "UDP6"
 		sleep 2s
 		PID=`ps -ef | grep "socat UDP4-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
 		[[ -z $PID ]] && echo -e "${Error} Socat UDP 启动失败 !" && exit 1
-		addLocal "UDP4"
+		addLocal "UDP6"
 		iptables -I INPUT -p udp --dport ${Socatport} -j ACCEPT
 	elif [[ ${socattype} = "TCP+UDP" ]]; then
-		runSocat "TCP4"
-		runSocat "UDP4"
+		runSocat "TCP6"
+		runSocat "UDP6"
 		sleep 2s
-		PID=`ps -ef | grep "socat TCP4-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
-		PID1=`ps -ef | grep "socat UDP4-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
+		PID=`ps -ef | grep "socat TCP6-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
+		PID1=`ps -ef | grep "socat UDP6-LISTEN:${Socatport}" | grep -v grep | awk '{print $2}'`
 		if [[ -z $PID ]]; then
 			echo -e "${Error} Socat TCP 启动失败 !" && exit 1
 		else
 			[[ -z $PID1 ]] && echo -e "${Error} Socat TCP 启动成功，但 UDP 启动失败 !"
-			addLocal "TCP4"
-			addLocal "UDP4"
+			addLocal "TCP6"
+			addLocal "UDP6"
 			iptables -I INPUT -p tcp --dport ${Socatport} -j ACCEPT
 			iptables -I INPUT -p udp --dport ${Socatport} -j ACCEPT
 		fi
